@@ -91,7 +91,7 @@ class WeatherService {
                     print("Value '\(value)' not found:", context.debugDescription)
                     print("codingPath:", context.codingPath)
                 } catch let DecodingError.typeMismatch(type, context)  {
-                    print("Type '\(type)' mismatch:", context.debugDescription)
+                    print("Type '\(type)' mismatch22:", context.debugDescription)
                     print("codingPath:", context.codingPath)
                 } catch {
                     print("error code= \(error)")
