@@ -58,8 +58,8 @@ class WeatherServiceManager {
 
 class WeatherService {
     static func getResults(completionHandler: @escaping (Result<WeatherDataModel, ErrorCodes>) -> ()) {
-        if var urlComponents = URLComponents(string: "http://api.weatherapi.com/v1/current.json") {
-            urlComponents.query = "key=0e2031ce23c94cecb9d132944230105&q=Paris"
+        if var urlComponents = URLComponents(string: "https://api.weatherapi.com/v1/current.json") {
+            urlComponents.query = "key=0e2031ce23c94cecb9d132944230105&q=visakhapatnam"
             
             guard let url = urlComponents.url else {
                 return
@@ -91,7 +91,7 @@ class WeatherService {
                     print("Value '\(value)' not found:", context.debugDescription)
                     print("codingPath:", context.codingPath)
                 } catch let DecodingError.typeMismatch(type, context)  {
-                    print("Type '\(type)' mismatch22:", context.debugDescription)
+                    print("Type '\(type)' mismatch:", context.debugDescription)
                     print("codingPath:", context.codingPath)
                 } catch {
                     print("error code= \(error)")
@@ -102,5 +102,55 @@ class WeatherService {
                 
             }.resume()
         }
+    }
+    
+    static func getResources<T: Decodable>(url: String, completionHandler: @escaping (Result<T, ErrorCodes>) -> ()) {
+        if var urlComponents = URLComponents(string: "https://api.weatherapi.com/v1/\(url).json") {
+            urlComponents.query = "key=0e2031ce23c94cecb9d132944230105&q=visakhapatnam"
+            
+            guard let url = urlComponents.url else {
+                return
+            }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                guard data != nil else {
+                    print("data is nil")
+                    return
+                }
+                
+                
+                do {
+                    let decoder = JSONDecoder()
+                    let decodedData = try decoder.decode(T.self, from: data!)
+                    DispatchQueue.main.async {
+                        completionHandler(.success(decodedData))
+                    }
+                } catch let DecodingError.dataCorrupted(context) {
+                    print(context)
+                } catch let DecodingError.keyNotFound(key, context) {
+                    print("Key '\(key)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch let DecodingError.valueNotFound(value, context) {
+                    print("Value '\(value)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch let DecodingError.typeMismatch(type, context)  {
+                    print("Type '\(type)' mismatch:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch {
+                    print("error code= \(error)")
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(ErrorCodes.cityNotFound))
+                    }
+                }
+                
+            }.resume()
+        }
+        
+        
+        
+        
     }
 }
