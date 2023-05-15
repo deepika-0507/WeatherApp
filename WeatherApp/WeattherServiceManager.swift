@@ -17,7 +17,7 @@ class WeatherServiceManager {
     let urlSession =  URLSession(configuration: .default)
     var dataTask: URLSessionDataTask?
     
-    func getResults(completionHandler: @escaping (Result<WeatherDataModel, Error>) -> ()) {
+    func getResults(completionHandler: @escaping (Result<WeatherData, Error>) -> ()) {
         dataTask?.cancel()
         
         if var urlComponents = URLComponents(string: "http://api.weatherapi.com/v1/current.json") {
@@ -38,7 +38,7 @@ class WeatherServiceManager {
                 
                 do {
                     let decoder = JSONDecoder()
-                    let decodedData = try decoder.decode(WeatherDataModel.self, from: data!)
+                    let decodedData = try decoder.decode(WeatherData.self, from: data!)
                     DispatchQueue.main.async {
                         completionHandler(.success(decodedData))
                     }
@@ -57,7 +57,7 @@ class WeatherServiceManager {
 }
 
 class WeatherService {
-    static func getResults(completionHandler: @escaping (Result<WeatherDataModel, ErrorCodes>) -> ()) {
+    static func getResults(completionHandler: @escaping (Result<WeatherData, ErrorCodes>) -> ()) {
         if var urlComponents = URLComponents(string: "https://api.weatherapi.com/v1/current.json") {
             urlComponents.query = "key=0e2031ce23c94cecb9d132944230105&q=visakhapatnam"
             
@@ -78,7 +78,7 @@ class WeatherService {
                 
                 do {
                     let decoder = JSONDecoder()
-                    let decodedData = try decoder.decode(WeatherDataModel.self, from: data!)
+                    let decodedData = try decoder.decode(WeatherData.self, from: data!)
                     DispatchQueue.main.async {
                         completionHandler(.success(decodedData))
                     }
@@ -104,9 +104,9 @@ class WeatherService {
         }
     }
     
-    static func getResources<T: Decodable>(url: String, completionHandler: @escaping (Result<T, ErrorCodes>) -> ()) {
+    static func getResources<T: Decodable>(url: String, city: String, completionHandler: @escaping (Result<T, ErrorCodes>) -> ()) {
         if var urlComponents = URLComponents(string: "https://api.weatherapi.com/v1/\(url).json") {
-            urlComponents.query = "key=0e2031ce23c94cecb9d132944230105&q=visakhapatnam"
+            urlComponents.query = "key=0e2031ce23c94cecb9d132944230105&q=\(city)"
             
             guard let url = urlComponents.url else {
                 return

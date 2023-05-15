@@ -33,7 +33,6 @@ struct ContentView: View {
                             }
                             .padding()
                         }
-                        
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -49,9 +48,44 @@ struct ContentView: View {
                 .resizable()
                 .ignoresSafeArea()
                 .overlay(Color.black.opacity(0.24))
-            
         }
-        
+        .overlay(alignment: .bottom) {
+            BottomTabBar()
+        }
+    }
+}
+
+struct BottomTabBar: View {
+    @State var showSearchScreen = false
+    var body: some View {
+        HStack() {
+            Button(action: {
+                showSearchScreen.toggle()
+            }) {
+                Image(systemName: "plus.app")
+                    .resizable()
+                    .renderingMode(.template)
+                    .foregroundColor(.white)
+                    .scaledToFit()
+                    .frame(width: 25, height: 25)
+                    .padding(.leading)
+            }
+            Spacer()
+            Text("Bottom")
+                .foregroundColor(.white)
+            
+            Spacer()
+            
+            Text("Bottom")
+                .foregroundColor(.white)
+        }
+        .sheet(isPresented: $showSearchScreen) {
+            SearchView(showScreen: $showSearchScreen)
+        }
+        .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+        .frame(maxWidth: .infinity)
+        .background(Color.black.opacity(0.7))
+        .ignoresSafeArea()
     }
 }
 
@@ -67,5 +101,6 @@ struct SectionBackgroundView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView().environmentObject(WeatherViewModel())
+        BottomTabBar()
     }
 }

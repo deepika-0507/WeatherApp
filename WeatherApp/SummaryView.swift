@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SummaryView: View {
-    @Binding var weatherData: WeatherDataModel
+    @Binding var weatherData: WeatherData
     
     var body: some View {
         VStack(spacing: 10) {
@@ -30,6 +30,6 @@ struct SummaryView: View {
 
 struct SummaryView_Previews: PreviewProvider {
     static var previews: some View {
-        SummaryView(weatherData: Binding.constant(WeatherDataModel.defaultWeatherDataModel))
+        SummaryView(weatherData: Binding.constant(WeatherData.defaultWeatherDataModel))
     }
 }

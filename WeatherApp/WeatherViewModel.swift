@@ -9,36 +9,39 @@ import Foundation
 
 
 class WeatherViewModel: ObservableObject {
-    @Published var weatherData: WeatherDataModel = WeatherDataModel.defaultWeatherDataModel
-    @Published var hourlyData: ForeCastDataModel = ForeCastDataModel.defaultHourlyDataModel
+    @Published var weatherData: WeatherData = WeatherData.defaultWeatherDataModel
+    @Published var hourlyData: ForeCastData = ForeCastData.defaultHourlyDataModel
+    @Published var cityName: String = "Visakhapatnam" {
+        didSet {
+            getSummaryData()
+            getHourlyData()
+        }
+    }
     
     init() {
-//        WeatherService.getResults() { result in
-//            switch result {
-//            case .success(let data):
-//                self.weatherData = data
-//            case .failure(let error):
-//                print("eror= \(error)")
-//            }
-//
-//        }
-        
-        WeatherService.getResources(url: "current") { (result: Result<WeatherDataModel, ErrorCodes>) in
+        getSummaryData()
+        getHourlyData()
+    }
+    
+    func getSummaryData() -> Void {
+        WeatherService.getResources(url: "current", city: self.cityName) { (result: Result<WeatherData, ErrorCodes>) in
+            print("city = \(self.cityName)")
             switch result {
             case .success(let data):
                 self.weatherData = data
             case .failure(let error):
-                print("eror= \(error)")
+                print("error = \(error)")
             }
         }
-        
-        WeatherService.getResources(url: "forecast") { (result: Result<ForeCastDataModel, ErrorCodes>) in
+    }
+    
+    func getHourlyData() -> Void {
+        WeatherService.getResources(url: "forecast", city: self.cityName) { (result: Result<ForeCastData, ErrorCodes>) in
             switch result {
             case .success(let data):
                 self.hourlyData = data
-                print("data = \(data.forecast.forecastday[0])")
             case .failure(let error):
-                print("eror= \(error)")
+                print("error = \(error)")
             }
         }
     }
